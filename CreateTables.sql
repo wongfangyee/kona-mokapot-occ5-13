@@ -2,6 +2,20 @@
 -- KONA MOKAPOT COFFEE DB
 -- =========================
 
+-- member 1: database definition (DDL)
+-- DROP TABLES (for reset) 
+DROP TABLE OrderItem CASCADE CONSTRAINTS;
+DROP TABLE CustomerOrder CASCADE CONSTRAINTS;
+DROP TABLE MenuIngredient CASCADE CONSTRAINTS;
+DROP TABLE MenuItem CASCADE CONSTRAINTS;
+DROP TABLE Payment CASCADE CONSTRAINTS;
+DROP TABLE StaffAttendance CASCADE CONSTRAINTS;
+DROP TABLE Staff CASCADE CONSTRAINTS;
+DROP TABLE Ingredient CASCADE CONSTRAINTS;
+DROP TABLE Supplier CASCADE CONSTRAINTS;
+DROP TABLE MenuCategory CASCADE CONSTRAINTS;
+
+-- create table
 -- 1. Menu Category
 CREATE TABLE MenuCategory (
     CategoryID NUMBER PRIMARY KEY,
@@ -109,3 +123,61 @@ CREATE TABLE OrderItem (
 
 COMMIT;
 
+-- member 2: data manipulation(DML)
+--insert data 
+INSERT INTO MenuCategory VALUES (1, 'Coffee');
+INSERT INTO MenuCategory VALUES (2, 'Pastry');
+
+INSERT INTO Supplier VALUES (1, 'Local Beans Co', '0123456789', 'Johor');
+INSERT INTO Ingredient VALUES (1, 'Coffee Beans', 50, 'kg', 1);
+
+INSERT INTO Staff VALUES (1, 'Aina', 'Barista', '0192233445');
+
+INSERT INTO Payment VALUES (1, 'Cash', 15.00);
+
+INSERT INTO MenuItem VALUES (1, 'Latte', 7.50, 1);
+
+INSERT INTO MenuIngredient VALUES (1, 1, 0.02);
+
+INSERT INTO CustomerOrder VALUES (1, SYSTIMESTAMP, 1, 1);
+
+INSERT INTO OrderItem VALUES (1, 1, 2);
+
+COMMIT;
+
+--update
+UPDATE Ingredient
+SET StockLevel = StockLevel - 5
+WHERE IngredientID = 1;
+
+--delete
+DELETE FROM MenuItem
+WHERE MenuID = 1;
+
+--member 3: join operations
+--join
+SELECT o.OrderID, s.StaffName, m.FoodName, oi.Quantity
+FROM CustomerOrder o
+JOIN Staff s ON o.StaffID = s.StaffID
+JOIN OrderItem oi ON o.OrderID = oi.OrderID
+JOIN MenuItem m ON oi.MenuID = m.MenuID;
+
+--member 4: aggregate and group functions
+--aggregate
+SELECT COUNT(OrderID) AS TotalOrders
+FROM CustomerOrder;
+
+SELECT SUM(PaymentAmount) AS TotalSales
+FROM Payment;
+
+
+--member 5: queries & testing
+--nested query
+SELECT FoodName
+FROM MenuItem
+WHERE MenuID IN (
+    SELECT MenuID
+    FROM OrderItem
+    GROUP BY MenuID
+    HAVING SUM(Quantity) > 1
+);
