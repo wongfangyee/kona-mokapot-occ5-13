@@ -127,32 +127,68 @@ COMMIT;
 --insert data 
 INSERT INTO MenuCategory VALUES (1, 'Coffee');
 INSERT INTO MenuCategory VALUES (2, 'Pastry');
+INSERT INTO MenuCategory VALUES (3, 'Tea');
+INSERT INTO MenuCategory VALUES (4, 'Seasonal');
 
 INSERT INTO Supplier VALUES (1, 'Local Beans Co', '0123456789', 'Johor');
+INSERT INTO Supplier VALUES (2, 'Dairy Fresh', '0139988776', 'Selangor');
+INSERT INTO Supplier VALUES (3, 'Baker’s Delight', '0175544332', 'Kuala Lumpur');
+
 INSERT INTO Ingredient VALUES (1, 'Coffee Beans', 50, 'kg', 1);
+INSERT INTO Ingredient VALUES (2, 'Milk', 100, 'Liters', 2);
+INSERT INTO Ingredient VALUES (3, 'Sugar', 20, 'kg', 1);
+INSERT INTO Ingredient VALUES (4, 'Flour', 30, 'kg', 3);
 
 INSERT INTO Staff VALUES (1, 'Aina', 'Barista', '0192233445');
+INSERT INTO Staff VALUES (2, 'Zul', 'Manager', '0112233445');
+INSERT INTO Staff VALUES (3, 'Siti', 'Barista (PT)', '0188877665');
+INSERT INTO Staff VALUES (4, 'Raju', 'Cleaner', '0165544332');
+
+INSERT INTO StaffAttendance VALUES (1, 1, TO_TIMESTAMP('2023-11-01 08:00:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2023-11-01 16:00:00', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO StaffAttendance VALUES (2, 3, TO_TIMESTAMP('2023-11-01 16:00:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2023-11-02 00:30:00', 'YYYY-MM-DD HH24:MI:SS'));
 
 INSERT INTO Payment VALUES (1, 'Cash', 15.00);
+INSERT INTO Payment VALUES (2, 'E-Wallet', 19.50);
+INSERT INTO Payment VALUES (3, 'Credit Card', 8.00);
+INSERT INTO Payment VALUES (4, 'Cash', 25.50);
 
 INSERT INTO MenuItem VALUES (1, 'Latte', 7.50, 1);
+INSERT INTO MenuItem VALUES (2, 'Cappuccino', 9.50, 1);
+INSERT INTO MenuItem VALUES (3, 'Iced Peach Tea', 10.00, 3);
+INSERT INTO MenuItem VALUES (4, 'Chocolate Muffin', 8.00, 2);
 
 INSERT INTO MenuIngredient VALUES (1, 1, 0.02);
 
 INSERT INTO CustomerOrder VALUES (1, SYSTIMESTAMP, 1, 1);
+INSERT INTO CustomerOrder VALUES (2, SYSTIMESTAMP - INTERVAL '1' HOUR, 3, 2);
+INSERT INTO CustomerOrder VALUES (3, SYSTIMESTAMP - INTERVAL '2' HOUR, 1, 3);
+INSERT INTO CustomerOrder VALUES (4, SYSTIMESTAMP - INTERVAL '30' MINUTE, 3, 4);
 
 INSERT INTO OrderItem VALUES (1, 1, 2);
+INSERT INTO OrderItem VALUES (2, 2, 1);
+INSERT INTO OrderItem VALUES (2, 3, 1);
+INSERT INTO OrderItem VALUES (3, 4, 1);
+INSERT INTO OrderItem VALUES (4, 1, 3);
 
 COMMIT;
 
---update
-UPDATE Ingredient
-SET StockLevel = StockLevel - 5
-WHERE IngredientID = 1;
+-- Update stock level when a supplier delivery arrives
+UPDATE Ingredient 
+SET StockLevel = StockLevel + 50 
+WHERE IngredientName = 'Coffee Beans';
 
---delete
-DELETE FROM MenuItem
-WHERE MenuID = 1;
+-- End-of-day stock adjustment for perishables (Milk)
+UPDATE Ingredient 
+SET StockLevel = StockLevel - 10 
+WHERE IngredientID = 2;
+
+COMMIT;
+
+--Deletions (Removing non-essential staff or expired items)
+DELETE FROM Staff WHERE StaffID = 4; -- Cleaning service contract ended
+
+COMMIT;
+
 
 --member 3: join operations
 --join
@@ -181,3 +217,4 @@ WHERE MenuID IN (
     GROUP BY MenuID
     HAVING SUM(Quantity) > 1
 );
+
