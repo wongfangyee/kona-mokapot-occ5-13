@@ -1,6 +1,6 @@
--- =========================
+-- =========================================
 -- KONA MOKAPOT COFFEE DB
--- =========================
+-- =========================================
 
 -- member 1: database definition (DDL)
 -- DROP TABLES (for reset) 
@@ -123,8 +123,11 @@ CREATE TABLE OrderItem (
 
 COMMIT;
 
--- member 2: data manipulation(DML)
---insert data 
+-- =========================================
+-- MEMBER 2: DATA MANIPULATION (DML) - NG QI XUAN
+-- =========================================
+
+-- 1. Insert Sample Data
 INSERT INTO MenuCategory VALUES (1, 'Coffee');
 INSERT INTO MenuCategory VALUES (2, 'Pastry');
 INSERT INTO MenuCategory VALUES (3, 'Tea');
@@ -144,6 +147,7 @@ INSERT INTO Staff VALUES (2, 'Zul', 'Manager', '0112233445');
 INSERT INTO Staff VALUES (3, 'Siti', 'Barista (PT)', '0188877665');
 INSERT INTO Staff VALUES (4, 'Raju', 'Cleaner', '0165544332');
 
+-- Attendance logic based on 2 shifts (8am-4pm-12:30am)
 INSERT INTO StaffAttendance VALUES (1, 1, TO_TIMESTAMP('2023-11-01 08:00:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2023-11-01 16:00:00', 'YYYY-MM-DD HH24:MI:SS'));
 INSERT INTO StaffAttendance VALUES (2, 3, TO_TIMESTAMP('2023-11-01 16:00:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2023-11-02 00:30:00', 'YYYY-MM-DD HH24:MI:SS'));
 
@@ -158,6 +162,8 @@ INSERT INTO MenuItem VALUES (3, 'Iced Peach Tea', 10.00, 3);
 INSERT INTO MenuItem VALUES (4, 'Chocolate Muffin', 8.00, 2);
 
 INSERT INTO MenuIngredient VALUES (1, 1, 0.02);
+INSERT INTO MenuIngredient VALUES (2, 1, 0.02);
+INSERT INTO MenuIngredient VALUES (2, 2, 0.20);
 
 INSERT INTO CustomerOrder VALUES (1, SYSTIMESTAMP, 1, 1);
 INSERT INTO CustomerOrder VALUES (2, SYSTIMESTAMP - INTERVAL '1' HOUR, 3, 2);
@@ -172,7 +178,7 @@ INSERT INTO OrderItem VALUES (4, 1, 3);
 
 COMMIT;
 
--- Update stock level when a supplier delivery arrives
+-- 2. Update stock based on MySyarikat invoice arrivals
 UPDATE Ingredient 
 SET StockLevel = StockLevel + 50 
 WHERE IngredientName = 'Coffee Beans';
@@ -184,22 +190,22 @@ WHERE IngredientID = 2;
 
 COMMIT;
 
---Deletions (Removing non-essential staff or expired items)
-DELETE FROM Staff WHERE StaffID = 4; -- Cleaning service contract ended
+-- 3. Deletions (Removing non-essential staff or contracts)
+DELETE FROM Staff WHERE StaffID = 4;
 
 COMMIT;
 
 
---member 3: join operations
---join
+-- member 3: join operations
+-- [To be completed by Member 3]
 SELECT o.OrderID, s.StaffName, m.FoodName, oi.Quantity
 FROM CustomerOrder o
 JOIN Staff s ON o.StaffID = s.StaffID
 JOIN OrderItem oi ON o.OrderID = oi.OrderID
 JOIN MenuItem m ON oi.MenuID = m.MenuID;
 
---member 4: aggregate and group functions
---aggregate
+-- member 4: aggregate and group functions
+-- [To be completed by Member 4]
 SELECT COUNT(OrderID) AS TotalOrders
 FROM CustomerOrder;
 
@@ -207,8 +213,8 @@ SELECT SUM(PaymentAmount) AS TotalSales
 FROM Payment;
 
 
---member 5: queries & testing
---nested query
+-- member 5: queries & testing
+-- [To be completed by Member 5]
 SELECT FoodName
 FROM MenuItem
 WHERE MenuID IN (
@@ -217,4 +223,3 @@ WHERE MenuID IN (
     GROUP BY MenuID
     HAVING SUM(Quantity) > 1
 );
-
