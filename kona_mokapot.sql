@@ -144,8 +144,9 @@ INSERT INTO Ingredient VALUES (4, 'Flour', 30, 'kg', 3);
 
 INSERT INTO Staff VALUES (1, 'Aina', 'Barista', '0192233445');
 INSERT INTO Staff VALUES (2, 'Zul', 'Manager', '0112233445');
-INSERT INTO Staff VALUES (3, 'Siti', 'Barista (PT)', '0188877665');
-INSERT INTO Staff VALUES (4, 'Raju', 'Cleaner', '0165544332');
+INSERT INTO Staff VALUES (3, 'Raju', 'Cleaner', '0165544332');
+INSERT INTO Staff VALUES (4, 'Siti', 'Barista', '0188877665');
+
 
 -- Attendance logic based on 2 shifts (8am-4pm-12:30am)
 INSERT INTO StaffAttendance VALUES (1, 1, TO_TIMESTAMP('2023-11-01 08:00:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2023-11-01 16:00:00', 'YYYY-MM-DD HH24:MI:SS'));
@@ -223,3 +224,4 @@ WHERE MenuID IN (
     GROUP BY MenuID
     HAVING SUM(Quantity) > 1
 );
+
