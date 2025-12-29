@@ -226,7 +226,7 @@ DELETE FROM Staff WHERE StaffID = 4;
 COMMIT;
 
 
--- member 3: join operations
+-- member 3: join operations (order details, staff performance, menu reports)
 -- [Completed by Ivan Ooi Jian Chao]
 SELECT 
     o.OrderID,
@@ -283,6 +283,7 @@ WHERE MenuID IN (
     GROUP BY MenuID
     HAVING SUM(Quantity) > 1
 );
+
 
 
 
