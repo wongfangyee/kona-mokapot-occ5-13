@@ -227,12 +227,42 @@ COMMIT;
 
 
 -- member 3: join operations
--- [To be completed by Member 3]
-SELECT o.OrderID, s.StaffName, m.FoodName, oi.Quantity
+-- [Completed by Ivan Ooi Jian Chao]
+SELECT 
+    o.OrderID,
+    o.OrderDateTime,
+    s.StaffName,
+    m.FoodName,
+    oi.Quantity,
+    m.FoodPrice,
+    (oi.Quantity * m.FoodPrice) AS ItemTotal
 FROM CustomerOrder o
 JOIN Staff s ON o.StaffID = s.StaffID
 JOIN OrderItem oi ON o.OrderID = oi.OrderID
-JOIN MenuItem m ON oi.MenuID = m.MenuID;
+JOIN MenuItem m ON oi.MenuID = m.MenuID
+ORDER BY o.OrderID;
+
+SELECT 
+    s.StaffID,
+    s.StaffName,
+    COUNT(o.OrderID) AS TotalOrdersHandled,
+    SUM(p.PaymentAmount) AS TotalSalesHandled
+FROM Staff s
+JOIN CustomerOrder o ON s.StaffID = o.StaffID
+JOIN Payment p ON o.PaymentID = p.PaymentID
+GROUP BY s.StaffID, s.StaffName
+ORDER BY TotalSalesHandled DESC;
+
+SELECT 
+    m.MenuID,
+    m.FoodName,
+    c.CategoryName,
+    SUM(oi.Quantity) AS TotalQuantitySold
+FROM MenuItem m
+JOIN OrderItem oi ON m.MenuID = oi.MenuID
+JOIN MenuCategory c ON m.CategoryID = c.CategoryID
+GROUP BY m.MenuID, m.FoodName, c.CategoryName
+ORDER BY TotalQuantitySold DESC;
 
 -- member 4: aggregate and group functions
 -- [To be completed by Member 4]
@@ -253,5 +283,6 @@ WHERE MenuID IN (
     GROUP BY MenuID
     HAVING SUM(Quantity) > 1
 );
+
 
 
