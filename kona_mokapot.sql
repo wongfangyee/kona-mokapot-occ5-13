@@ -273,16 +273,114 @@ SELECT SUM(PaymentAmount) AS TotalSales
 FROM Payment;
 
 
--- member 5: queries & testing
--- [To be completed by Member 5]
+-- =========================================
+-- MEMBER 5: QUERIES & TESTING
+-- =========================================
+
+-- 1. List top-selling menu items (by total quantity sold)
+SELECT m.FoodName, SUM(oi.Quantity) AS TotalSold
+FROM MenuItem m
+JOIN OrderItem oi ON m.MenuID = oi.MenuID
+GROUP BY m.FoodName
+ORDER BY TotalSold DESC;
+-- Shows which menu items are most popular among customers
+
+-- 2. Menu items that have never been sold
 SELECT FoodName
 FROM MenuItem
-WHERE MenuID IN (
-    SELECT MenuID
+WHERE MenuID NOT IN (
+    SELECT DISTINCT MenuID
     FROM OrderItem
-    GROUP BY MenuID
-    HAVING SUM(Quantity) > 1
 );
+-- Useful to identify items that may need promotion or removal
+
+-- 3. Total sales per day
+SELECT TRUNC(o.OrderDateTime) AS OrderDate, SUM(p.PaymentAmount) AS DailySales
+FROM CustomerOrder o
+JOIN Payment p ON o.PaymentID = p.PaymentID
+GROUP BY TRUNC(o.OrderDateTime)
+ORDER BY OrderDate;
+-- Aggregates sales by date for daily revenue reporting
+
+-- 4. Staff performance: total orders handled and total sales
+SELECT s.StaffName, COUNT(o.OrderID) AS OrdersHandled, SUM(p.PaymentAmount) AS SalesHandled
+FROM Staff s
+LEFT JOIN CustomerOrder o ON s.StaffID = o.StaffID
+LEFT JOIN Payment p ON o.PaymentID = p.PaymentID
+GROUP BY s.StaffName
+ORDER BY SalesHandled DESC;
+-- Shows performance of each staff, including those with no orders
+
+-- 5. Staff attendance details with hours worked
+SELECT 
+    s.StaffName,
+    a.ClockInTime,
+    a.ClockOutTime,
+    ROUND((CAST(a.ClockOutTime AS DATE) - CAST(a.ClockInTime AS DATE)) * 24, 2) AS HoursWorked
+FROM StaffAttendance a
+JOIN Staff s ON a.StaffID = s.StaffID
+ORDER BY s.StaffName, a.ClockInTime;
+-- Calculates shift duration for monitoring staff attendance
+
+-- 6. Ingredients low in stock (less than 20 units)
+SELECT IngredientName, StockLevel, Unit
+FROM Ingredient
+WHERE StockLevel < 20
+ORDER BY StockLevel ASC;
+-- Helps to identify ingredients that need reordering
+
+-- 7. Total revenue by menu category
+SELECT c.CategoryName, SUM(oi.Quantity * m.FoodPrice) AS Revenue
+FROM MenuItem m
+JOIN MenuCategory c ON m.CategoryID = c.CategoryID
+JOIN OrderItem oi ON m.MenuID = oi.MenuID
+GROUP BY c.CategoryName
+ORDER BY Revenue DESC;
+-- Analyzes which menu categories generate the most revenue
+
+-- 8. Average order value per staff
+SELECT s.StaffName, ROUND(AVG(p.PaymentAmount), 2) AS AvgOrderValue
+FROM Staff s
+JOIN CustomerOrder o ON s.StaffID = o.StaffID
+JOIN Payment p ON o.PaymentID = p.PaymentID
+GROUP BY s.StaffName
+ORDER BY AvgOrderValue DESC;
+-- Measures average revenue generated per order by staff
+
+-- 9. Total quantity sold per ingredient
+SELECT i.IngredientName, SUM(mi.UsageAmount * oi.Quantity) AS TotalUsed
+FROM Ingredient i
+JOIN MenuIngredient mi ON i.IngredientID = mi.IngredientID
+JOIN OrderItem oi ON mi.MenuID = oi.MenuID
+GROUP BY i.IngredientName
+ORDER BY TotalUsed DESC;
+-- Calculates ingredient usage to monitor inventory consumption
+
+-- 10. Orders with multiple menu items
+SELECT o.OrderID, COUNT(oi.MenuID) AS ItemsInOrder
+FROM CustomerOrder o
+JOIN OrderItem oi ON o.OrderID = oi.OrderID
+GROUP BY o.OrderID
+HAVING COUNT(oi.MenuID) > 1
+ORDER BY ItemsInOrder DESC;
+-- Identifies orders containing more than one menu item
+
+-- 11. Total number of orders per menu item
+SELECT m.FoodName, COUNT(oi.OrderID) AS NumberOfOrders
+FROM MenuItem m
+JOIN OrderItem oi ON m.MenuID = oi.MenuID
+GROUP BY m.FoodName
+ORDER BY NumberOfOrders DESC;
+-- Checks popularity of menu items by number of orders
+
+-- 12. Orders handled by each staff per day
+SELECT s.StaffName, TRUNC(o.OrderDateTime) AS OrderDate, COUNT(o.OrderID) AS OrdersPerDay
+FROM Staff s
+JOIN CustomerOrder o ON s.StaffID = o.StaffID
+GROUP BY s.StaffName, TRUNC(o.OrderDateTime)
+ORDER BY OrderDate, OrdersPerDay DESC;
+-- Useful for monitoring daily performance of each staff
+
 
 
 
