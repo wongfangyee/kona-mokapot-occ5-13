@@ -265,12 +265,41 @@ GROUP BY m.MenuID, m.FoodName, c.CategoryName
 ORDER BY TotalQuantitySold DESC;
 
 -- member 4: aggregate and group functions
--- [To be completed by Member 4]
+-- completed by Nur Husna Binti Muhammad Ridzwan
+-- Total number of sales
 SELECT COUNT(OrderID) AS TotalOrders
 FROM CustomerOrder;
 
+-- Total sales 
 SELECT SUM(PaymentAmount) AS TotalSales
 FROM Payment;
+
+SELECT AVG(OrderTotal) AS AverageOrderValue
+FROM (
+    SELECT o.OrderID, SUM(m.FoodPrice * oi.Quantity) AS OrderTotal
+    FROM CustomerOrder o
+    JOIN OrderItem oi ON o.OrderID = oi.OrderID
+    JOIN MenuItem m ON oi.MenuID = m.MenuID
+    GROUP BY o.OrderID
+);
+
+
+-- Popular menu items 
+SELECT 
+    m.FoodName,
+    SUM(oi.Quantity) AS TotalQuantitySold,
+    COUNT(DISTINCT oi.OrderID) AS NumberOfOrders
+FROM OrderItem oi
+JOIN MenuItem m ON oi.MenuID = m.MenuID
+GROUP BY m.FoodName
+ORDER BY TotalQuantitySold DESC;
+
+-- Sales by payment method
+SELECT  
+    PaymentMethod,
+    SUM(PaymentAmount) AS TotalSales
+FROM Payment
+GROUP BY PaymentMethod;
 
 
 -- =========================================
