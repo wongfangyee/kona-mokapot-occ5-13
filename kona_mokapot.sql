@@ -2,7 +2,8 @@
 -- KONA MOKAPOT COFFEE DB
 -- =========================================
 
--- member 1: database definition (DDL)
+-- member 1: database definition (DDL) 
+-- completed by Wong Fang Yee
 -- DROP TABLES (for reset) 
 DROP TABLE OrderItem CASCADE CONSTRAINTS;
 DROP TABLE CustomerOrder CASCADE CONSTRAINTS;
@@ -274,6 +275,7 @@ FROM CustomerOrder;
 SELECT SUM(PaymentAmount) AS TotalSales
 FROM Payment;
 
+--average order value
 SELECT AVG(OrderTotal) AS AverageOrderValue
 FROM (
     SELECT o.OrderID, SUM(m.FoodPrice * oi.Quantity) AS OrderTotal
@@ -303,7 +305,7 @@ GROUP BY PaymentMethod;
 
 
 -- =========================================
--- MEMBER 5: QUERIES & TESTING
+-- MEMBER 5: QUERIES & TESTING --Cadee Ang Zhen Ling
 -- =========================================
 
 -- 1. List top-selling menu items (by total quantity sold)
@@ -409,6 +411,7 @@ JOIN CustomerOrder o ON s.StaffID = o.StaffID
 GROUP BY s.StaffName, TRUNC(o.OrderDateTime)
 ORDER BY OrderDate, OrdersPerDay DESC;
 -- Useful for monitoring daily performance of each staff
+
 
 
 
